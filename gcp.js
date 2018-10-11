@@ -39,7 +39,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'git clone $_GITURL --depth 1 --branch new --single-branch /tmp/$_NAME && mv /tmp/$_NAME/.git . && ls && git reset --hard',
+			'git clone $_GITURL --depth 1 --branch master --single-branch /tmp/$_NAME && mv /tmp/$_NAME/.git . && ls && git reset --hard',
 		],
 	},
 	{
