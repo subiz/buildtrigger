@@ -6,8 +6,10 @@ const { convertGitlabHook } = require('./gitlab.js')
 
 const { accessToken } = require('./config.js')
 
-const verifyAccessToken = req =>
-	url.parse(req.url, true).query.access_token !== accessToken
+const verifyAccessToken = req => {
+	console.log("EXPECT", url.parse(req.url, true).query.access_token)
+	return url.parse(req.url, true).query.access_token !== accessToken
+}
 
 const mapService = req => url.parse(req.url, true).query.provider || ''
 
@@ -28,7 +30,7 @@ exports.hook = async (req, res) => {
 	}
 	let err = await submitBuild(repo.url, repo.repo, repo.commit)
 	if (err) {
-		res.status(400).send({ repo, err })
+		res.status(200).send({ repo, err })
 		return
 	}
 	res.send(repo)
