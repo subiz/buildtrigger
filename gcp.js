@@ -48,7 +48,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz $_NAME.tar.gz 2>&1 && tar -zxf $_NAME.tar.gz',
+			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz $_NAME.cache.tar.gz && tar -zxf $_NAME.cache.tar.gz || exit 0',
 		],
 		waitFor: ['-'],
 	},
@@ -57,7 +57,7 @@ const gSteps = [
 		entrypoint: '/bin/sh',
 		args: [
 			'-c',
-			"echo '#!/bin/sh' > run.sh && ls && dockerun run.yaml >> run.sh && chmod +x run.sh",
+			"echo '#!/bin/sh' > run.sh && ls && dockerun run.yaml >> run.sh && chmod +x run.sh || exit 0",
 		],
 		waitFor: ['git', 'cache'],
 	},
@@ -78,7 +78,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile Dockerfile.tmp && configmap -config=config.yaml -format=docker -compact configmap.yaml >> Dockerfile.tmp',
+			'[ -f Dockerfile ] && cp Dockerfile Dockerfile.tmp && configmap -config=config.yaml -format=docker -compact configmap.yaml >> Dockerfile.tmp || exit 0',
 		],
 		waitFor: ['git'],
 	},
@@ -88,7 +88,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile.tmp ] && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile.tmp ] && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
 		],
 		waitFor: ['configmap', 'run'],
 	},
@@ -97,14 +97,14 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d .cache ] && tar -zcf $_NAME.tar.gz .cache && gsutil cp $_NAME.tar.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz',
+			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.tar.cache.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz || exit 0',
 		],
 		waitFor: ['run'],
 	},
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.yaml ] && kubectl get pod'],
+		args: ['-c', '[ -f deploy.yaml ] && kubectl get pod || exit 0'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
