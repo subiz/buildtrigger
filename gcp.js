@@ -48,7 +48,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz $_NAME.tar.gz && tar -zxf $_NAME.tar.gz',
+			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz $_NAME.tar.gz 2>&1 && tar -zxf $_NAME.tar.gz',
 		],
 		waitFor: ['-'],
 	},
@@ -78,7 +78,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'cp Dockerfile Dockerfile.tmp && configmap -config=config.yaml -format=docker -compact configmap.yaml >> Dockerfile.tmp',
+			'[ -f Dockerfile ] && cp Dockerfile Dockerfile.tmp && configmap -config=config.yaml -format=docker -compact configmap.yaml >> Dockerfile.tmp',
 		],
 		waitFor: ['git'],
 	},
@@ -88,7 +88,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile.tmp ] && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['configmap', 'run'],
 	},
@@ -97,13 +97,14 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'tar -zcf $_NAME.tar.gz .cache && gsutil cp $_NAME.tar.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz',
+			'[ -d .cache ] && tar -zcf $_NAME.tar.gz .cache && gsutil cp $_NAME.tar.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.tar.gz',
 		],
 		waitFor: ['run'],
 	},
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
-		args: ['get', 'pod'],
+		entrypoint: 'sh',
+		args: ['-c', '[ -f deploy.yaml ] && kubectl get pod'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',

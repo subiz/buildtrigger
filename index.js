@@ -25,7 +25,7 @@ exports.hook = async (req, res) => {
 	else if (provider === 'gitlab') repo = convertGitlabHook(req.body)
 	else if (provider === 'github') repo = convertGithubHook(req.body)
 	else {
-		res.status(400).send('unknow provider in ?provider=')
+		res.status(400).send('unknown provider in ?provider=')
 		return
 	}
 	let err = await submitBuild(repo.url, repo.repo, repo.commit)
