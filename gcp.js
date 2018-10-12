@@ -39,7 +39,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'git clone $_GITURL --depth 1 --branch master --single-branch /tmp/$_NAME && mv /tmp/$_NAME/.git . && ls && git reset --hard',
+			'git clone $_GITURL --depth 1 --branch master --single-branch /tmp/$_NAME && mv /tmp/$_NAME/.git . && git reset --hard',
 		],
 	},
 	{
@@ -64,7 +64,7 @@ const gSteps = [
 		],
 		args: [
 			'-c',
-			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && cat .build.tmp && ./.build.tmp',
+			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./.build.tmp',
 		],
 	},
 	{
@@ -82,7 +82,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'pwd && ls -lah && [ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.tar.cache.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz || exit 0',
+			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.tar.cache.gz gs://artifacts.subiz-version-4.appspot.com/ || exit 0',
 		],
 		waitFor: ['run'],
 	},
