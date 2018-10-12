@@ -66,6 +66,7 @@ const gSteps = [
 			'-c',
 			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./.build.tmp',
 		],
+		waitFor: ['cache', 'git'],
 	},
 	{
 		id: 'build-image',
@@ -73,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
+			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['run'],
 	},
@@ -82,13 +83,14 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com || exit 0',
+			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com',
 		],
 		waitFor: ['run'],
 	},
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
-		args: ['get', 'pod'],
+		entrypoint: 'sh',
+		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > .deploy.prod.yaml && /builder/kubectl.bash apply -f .deploy.prod.yaml'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
