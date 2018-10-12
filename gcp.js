@@ -53,34 +53,19 @@ const gSteps = [
 		waitFor: ['-'],
 	},
 	{
-		name: 'subiz/dockerun:1.1.3',
-		entrypoint: '/bin/sh',
-		args: [
-			'-c',
-			"echo '#!/bin/sh' > run.sh && ls && dockerun run.yaml >> run.sh && chmod +x run.sh || exit 0",
-		],
-		waitFor: ['git', 'cache'],
-	},
-	{
 		id: 'run',
 		name: 'gcr.io/cloud-builders/docker',
+		entrypoint: '/bin/sh',
 		env: [
 			'NAME=$_NAME',
 			'DOCKERHOST=$_DOCKERHOST',
 			'ORG=$_ORG',
 			'VERSION=$_VERSION',
 		],
-		entrypoint: './run.sh',
-	},
-	{
-		id: 'configmap',
-		name: 'subiz/configmap:1.0.13',
-		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile Dockerfile.tmp && configmap -config=config.yaml -format=docker -compact configmap.yaml >> Dockerfile.tmp || exit 0',
+			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./build.tmp',
 		],
-		waitFor: ['git'],
 	},
 	{
 		id: 'build-image',
@@ -88,7 +73,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile.tmp ] && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
+			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
 		],
 		waitFor: ['configmap', 'run'],
 	},
@@ -104,7 +89,7 @@ const gSteps = [
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.yaml ] && kubectl get pod || exit 0'],
+		args: ['-c', '[ -f deploy.prod.yaml ] && kubectl apply -f deploy.prod.yaml || exit 0'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
@@ -118,7 +103,7 @@ const makeBuildConfig = (giturl, name, version, org) => `
 	"source": {
 		"storageSource": {
       "bucket": "artifacts.subiz-version-4.appspot.com",
-      "object": "config.yaml.tar.gz"
+      "object": "prod.tar.gz"
 		}
 	},
 	"steps": ${JSON.stringify(gSteps)},
