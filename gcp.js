@@ -64,7 +64,7 @@ const gSteps = [
 		],
 		args: [
 			'-c',
-			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./.build.tmp',
+			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && cat .build.tmp && ./.build.tmp',
 		],
 	},
 	{
@@ -88,8 +88,7 @@ const gSteps = [
 	},
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
-		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.prod.yaml ] && kubectl apply -f deploy.prod.yaml || exit 0'],
+		args: ['get', 'pod', '||', 'exit', '0'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
