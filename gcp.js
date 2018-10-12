@@ -64,7 +64,7 @@ const gSteps = [
 		],
 		args: [
 			'-c',
-			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./build.tmp',
+			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./.build.tmp',
 		],
 	},
 	{
