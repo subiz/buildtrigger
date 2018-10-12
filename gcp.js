@@ -75,7 +75,7 @@ const gSteps = [
 			'-c',
 			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
 		],
-		waitFor: ['configmap', 'run'],
+		waitFor: ['run'],
 	},
 	{
 		name: 'gcr.io/cloud-builders/gsutil',
