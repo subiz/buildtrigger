@@ -82,13 +82,13 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.tar.cache.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz || exit 0',
+			'pwd && ls -lah && [ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.tar.cache.gz gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz || exit 0',
 		],
 		waitFor: ['run'],
 	},
 	{
 		name: 'gcr.io/cloud-builders/kubectl',
-		args: ['get', 'pod', '||', 'exit', '0'],
+		args: ['get', 'pod'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
