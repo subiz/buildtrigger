@@ -74,11 +74,12 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['run'],
 	},
 	{
+		id: 'save cache',
 		name: 'gcr.io/cloud-builders/gsutil',
 		entrypoint: 'sh',
 		args: [
@@ -88,6 +89,7 @@ const gSteps = [
 		waitFor: ['run'],
 	},
 	{
+		id: 'deploy',
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
 		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > .deploy.prod.yaml && /builder/kubectl.bash apply -f .deploy.prod.yaml'],
