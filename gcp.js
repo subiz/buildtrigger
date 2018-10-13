@@ -84,7 +84,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com',
+			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com || exit 0',
 		],
 		waitFor: ['run'],
 	},
