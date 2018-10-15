@@ -74,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile /tmp/$_NAME.Dockerfile && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> /tmp/$_NAME.Dockerfile && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f /tmp/$_NAME.Dockerfile . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile ] && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['run'],
 	},
