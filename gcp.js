@@ -92,7 +92,7 @@ const gSteps = [
 		id: 'deploy',
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply set-last-applied -f /tmp/$_NAME.deploy.prod.yaml'],
+		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
