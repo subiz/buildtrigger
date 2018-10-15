@@ -64,7 +64,7 @@ const gSteps = [
 		],
 		args: [
 			'-c',
-			'echo "#!/bin/sh" > .build.tmp && ./.dockerun build.yaml >> .build.tmp && chmod +x .build.tmp && ./.build.tmp',
+			'echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
 		],
 		waitFor: ['cache', 'git'],
 	},
@@ -74,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile .Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile ] && cp Dockerfile /tmp/$_NAME.Dockerfile && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> /tmp/$_NAME.Dockerfile && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f /tmp/$_NAME.Dockerfile . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['run'],
 	},
@@ -92,7 +92,7 @@ const gSteps = [
 		id: 'deploy',
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > .deploy.prod.yaml && /builder/kubectl.bash apply -f .deploy.prod.yaml'],
+		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply set-last-applied -f /tmp/$_NAME.deploy.prod.yaml'],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
