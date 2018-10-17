@@ -68,7 +68,7 @@ args: ['info'],
 		],
 		args: [
 			'-c',
-			'echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
+			'ls -lah ~ && env && echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
 		],
 		waitFor: ['cache', 'git'],
 	},
