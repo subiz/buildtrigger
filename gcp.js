@@ -33,6 +33,10 @@ const submitBuild = async (giturl, name, version) => {
 }
 
 const gSteps = [
+{
+	name: 'gcr.io/cloud-builders/gcloud',
+args: ['info'],
+},
 	{
 		id: 'git',
 		name: 'gcr.io/cloud-builders/git',
