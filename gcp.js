@@ -33,10 +33,6 @@ const submitBuild = async (giturl, name, version) => {
 }
 
 const gSteps = [
-{
-	name: 'gcr.io/cloud-builders/gcloud',
-args: ['info'],
-},
 	{
 		id: 'git',
 		name: 'gcr.io/cloud-builders/git',
@@ -52,7 +48,7 @@ args: ['info'],
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz $_NAME.cache.tar.gz && tar -zxf $_NAME.cache.tar.gz || exit && ls -lah /builder/home/.config/gcloud',
+			'gsutil cp gs://artifacts.subiz-version-4.appspot.com/$_NAME.cache.tar.gz $_NAME.cache.tar.gz && tar -zxf $_NAME.cache.tar.gz || exit 0',
 		],
 		waitFor: ['-'],
 	},
@@ -68,7 +64,7 @@ args: ['info'],
 		],
 		args: [
 			'-c',
-			'date && cp -R ~ ./.home && date && echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
+			'cp -R ~ ./.home && echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
 		],
 		waitFor: ['cache', 'git'],
 	},
