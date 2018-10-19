@@ -94,7 +94,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d public ] && gsutil cp -Rf public gs://public-gcs.subiz-cdn.com/$_NAME/ || exit 0',
+			'[ -d public ] && gsutil -m cp -Zr public gs://subiz-prod/$_NAME/ || exit 0',
 		],
 		waitFor: ['run'],
 	},
