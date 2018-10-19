@@ -74,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION',
+			'[ -f Dockerfile ] && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION || exit 0',
 		],
 		waitFor: ['run'],
 	},
@@ -94,7 +94,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d public ] && gsutil cp -R public gs://subiz-prod/$_NAME/public/',
+			'[ -d public ] && gsutil cp -R public gs://subiz-prod/$_NAME/public/ || exit 0',
 		],
 		waitFor: ['run'],
 	},
@@ -104,7 +104,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml',
+			'[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml || exit 0',
 		],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
@@ -116,7 +116,7 @@ const gSteps = [
 		id: 'last',
 		name: 'alpine',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f last.sh ] && ./last.sh'],
+		args: ['-c', '[ -f last.sh ] && ./last.sh || exit 0'],
 	},
 ]
 
