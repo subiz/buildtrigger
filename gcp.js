@@ -90,7 +90,7 @@ const gSteps = [
 	},
 	{
 		id: 'publish artifact',
-		name: 'gcr.io/cloud-builers/gsutil',
+		name: 'gcr.io/cloud-builders/gsutil',
 		entrypoint: 'sh',
 		args: [
 			'-c',
