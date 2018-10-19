@@ -89,6 +89,16 @@ const gSteps = [
 		waitFor: ['run'],
 	},
 	{
+		id: 'publish artifact',
+		name: 'gcr.io/cloud-builers/gsutil',
+		entrypoint: 'sh',
+		args: [
+			'-c',
+			'[ -d public ] && gsutil cp -R public gs://gs://subiz-prod/$_NAME/public/',
+		],
+		waitFor: ['run'],
+	},
+	{
 		id: 'deploy',
 		name: 'gcr.io/cloud-builders/kubectl',
 		entrypoint: 'sh',
@@ -106,7 +116,7 @@ const gSteps = [
 		id: 'last',
 		name: 'alpine',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f last.sh ] && ./last.sh' ],
+		args: ['-c', '[ -f last.sh ] && ./last.sh'],
 	},
 ]
 
