@@ -31,6 +31,8 @@ async function handle (uri, body) {
 	else if (provider === 'github') repo = convertGithubHook(body)
 	else return [400, null, 'unknown provider in ?provider=']
 
+	if (repo.branch !== 'master') return [200, null, 'not master branch']
+
 	let err = await submitBuild(repo.url, repo.repo, repo.commit)
 	if (err) return [200, null, { repo, err }]
 	return [200, null, repo]

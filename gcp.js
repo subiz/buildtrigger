@@ -12,7 +12,7 @@ const getAccessToken = async () =>
 	new GoogleToken({
 		key: Buffer.from(process.env.GCP_KEY, 'base64').toString(),
 		email: 'buildtrigger@subiz-version-4.iam.gserviceaccount.com',
-		scope: ['https://www.googleapis.com/auth/cloud-platform'], // or space-delimited string of scopes
+		scope: ['https://www.googleapis.com/auth/cloud-platform'],
 	}).getToken()
 
 const submitBuild = async (giturl, name, version) => {
