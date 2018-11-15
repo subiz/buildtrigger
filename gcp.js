@@ -10,7 +10,7 @@ const cloudbuildreq = ajax.post(
 
 const getAccessToken = async () =>
 	new GoogleToken({
-		keyFile: './Subiz-version-4-e5b7260d84d0.json', // or path to .p12 key file
+		key: Buffer.from(process.env.GCP_KEY, 'base64').toString(),
 		email: 'buildtrigger@subiz-version-4.iam.gserviceaccount.com',
 		scope: ['https://www.googleapis.com/auth/cloud-platform'], // or space-delimited string of scopes
 	}).getToken()
