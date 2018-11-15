@@ -14,7 +14,7 @@ const verifyAccessToken = uri => {
 const mapService = uri => url.parse(uri, true).query.provider || ''
 
 exports.hook = async (req, res) => {
-	const VERSION = 1.23
+	const VERSION = 1.24
 	let [code, head, body] = await handle(req.url, req.body)
 	head = Object.assign({ 'X-VERSION': VERSION }, head)
 	res.writeHead(code, head)
