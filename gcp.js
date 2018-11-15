@@ -136,6 +136,14 @@ const makeBuildConfig = (giturl, name, version, org) => `
 		"_DOCKERHOST":"gcr.io/",
 		"_ORG": "${org}",
 	},
+	"artifacts": {
+        "objects": {
+            "location": "gs://artifacts.subiz-version-4.appspot.com/",
+            "paths": [
+                "HelloWorld.class"
+            ]
+        }
+    }
 }
 `
 
