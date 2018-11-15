@@ -18,7 +18,7 @@ exports.hook = async (req, res) => {
 	let [code, head, body] = await handle(req.url, req.body)
 	head = Object.assign({ 'X-VERSION': VERSION }, head)
 	res.writeHead(code, head)
-	res.end(body)
+	res.end(JSON.stringify(body))
 }
 
 async function handle (uri, body) {
