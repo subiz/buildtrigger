@@ -120,31 +120,22 @@ const gSteps = [
 	},
 ]
 
-const makeBuildConfig = (giturl, name, version, org) => `
-{
-	"source": {
-		"storageSource": {
+const makeBuildConfig = (giturl, name, version, org) => `{
+  "id": "${+new Date()}",
+  "source": {
+    "storageSource": {
       "bucket": "artifacts.subiz-version-4.appspot.com",
       "object": "prod.tar.gz"
-		}
-	},
-	"steps": ${JSON.stringify(gSteps)},
-	"substitutions" : {
-		"_GITURL": "${giturl}",
-		"_NAME": "${name}",
-		"_VERSION": "${version}",
-		"_DOCKERHOST":"gcr.io/",
-		"_ORG": "${org}",
-	},
-	"artifacts": {
-        "objects": {
-            "location": "gs://artifacts.subiz-version-4.appspot.com/",
-            "paths": [
-                "HelloWorld.class"
-            ]
-        }
     }
-}
-`
+  },
+  "steps": ${JSON.stringify(gSteps)},
+  "substitutions" : {
+    "_GITURL": "${giturl}",
+    "_NAME": "${name}",
+    "_VERSION": "${version}",
+    "_DOCKERHOST":"gcr.io/",
+    "_ORG": "${org}",
+  }
+}`
 
 module.exports = { submitBuild }
