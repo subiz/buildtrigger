@@ -6,32 +6,33 @@ const { convertGitlabHook } = require('./gitlab.js')
 
 const { accessToken } = require('./config.js')
 
-const verifyAccessToken = req => {
-	console.log("EXPECT", url.parse(req.url, true).query.access_token)
-	return url.parse(req.url, true).query.access_token !== accessToken
+const verifyAccessToken = uri => {
+	console.log("EXPECT", url.parse(uri, true).query.access_token)
+	return url.parse(uri, true).query.access_token !== accessToken
 }
 
-const mapService = req => url.parse(req.url, true).query.provider || ''
+const mapService = uri => url.parse(uri, true).query.provider || ''
 
 exports.hook = async (req, res) => {
-	if (!verifyAccessToken(req)) {
-		res.status(400).send('invalid access token')
-		return
-	}
+	const VERSION = 1.23
+	let [code, head, body] = await handle(req.url,req.body)
+	head = Object.assign({'X-VERSION', VERSION}, head)
+	res.writeHead(code, head)
+	res.end(body)
+}
+
+async function handle (uri, body) {
+	if (!verifyAccessToken(uri))
+		return [400, null, 'invalid access token']
 
 	let repo
-	let provider = mapService(req)
-	if (provider === 'bitbucket') repo = convertBitbucketHook(req.body)
-	else if (provider === 'gitlab') repo = convertGitlabHook(req.body)
-	else if (provider === 'github') repo = convertGithubHook(req.body)
-	else {
-		res.status(400).send('unknown provider in ?provider=')
-		return
-	}
+	let provider = mapService(uri)
+	if (provider === 'bitbucket') repo = convertBitbucketHook(body)
+	else if (provider === 'gitlab') repo = convertGitlabHook(body)
+	else if (provider === 'github') repo = convertGithubHook(body)
+	else return [400, null, 'unknown provider in ?provider=']
+
 	let err = await submitBuild(repo.url, repo.repo, repo.commit)
-	if (err) {
-		res.status(200).send({ repo, err })
-		return
-	}
-	res.send(repo)
+	if (err) return [200, null, { repo, err }]
+	return [200, null, repo]
 }

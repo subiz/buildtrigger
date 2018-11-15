@@ -4,7 +4,7 @@ const convertGithubHook = body => {
 	let repo = (body.repository || {}).name || ''
 	let fullrepo = (body.repository || {}).full_name || ''
 	let branchsplit = ((body.ref || '') + '').split('/')
-	if (branchsplit.length < 3) return { err: 'invalid branch' + body.ref }
+	if (branchsplit.length < 3) return { err: 'invalid branch: ' + JSON.stringify(body) }
 	let branch = branchsplit[2]
 	if (!fullrepo) return { err: 'invalid repo fullnam' }
 	commit = commit.substring(0, 7)
