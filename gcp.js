@@ -121,7 +121,6 @@ const gSteps = [
 ]
 
 const makeBuildConfig = (giturl, name, version, org) => `{
-  "id": "${+new Date()}",
   "source": {
     "storageSource": {
       "bucket": "artifacts.subiz-version-4.appspot.com",
