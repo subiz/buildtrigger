@@ -7,7 +7,7 @@ const { convertGitlabHook } = require('./gitlab.js')
 const { accessToken } = require('./config.js')
 
 const verifyAccessToken = uri => {
-	console.log("EXPECT", url.parse(uri, true).query.access_token)
+	console.log('EXPECT', url.parse(uri, true).query.access_token)
 	return url.parse(uri, true).query.access_token !== accessToken
 }
 
@@ -15,15 +15,14 @@ const mapService = uri => url.parse(uri, true).query.provider || ''
 
 exports.hook = async (req, res) => {
 	const VERSION = 1.23
-	let [code, head, body] = await handle(req.url,req.body)
-	head = Object.assign({'X-VERSION', VERSION}, head)
+	let [code, head, body] = await handle(req.url, req.body)
+	head = Object.assign({ 'X-VERSION': VERSION }, head)
 	res.writeHead(code, head)
 	res.end(body)
 }
 
 async function handle (uri, body) {
-	if (!verifyAccessToken(uri))
-		return [400, null, 'invalid access token']
+	if (!verifyAccessToken(uri)) return [400, null, 'invalid access token']
 
 	let repo
 	let provider = mapService(uri)
