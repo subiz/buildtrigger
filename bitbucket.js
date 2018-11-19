@@ -1,4 +1,4 @@
-const { bbkAuth } = require('./config.js')
+const bbkAuth = process.env.BBK_AUTH
 
 const convertBitbucketHook = body => {
 	if (!body) return {}

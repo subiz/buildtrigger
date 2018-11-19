@@ -4,12 +4,10 @@ const { submitBuild } = require('./gcp.js')
 const { convertGithubHook } = require('./github.js')
 const { convertGitlabHook } = require('./gitlab.js')
 
-const { accessToken } = require('./config.js')
+const accessToken = process.env.ACCESS_TOKEN
 
-const verifyAccessToken = uri => {
-	console.log('EXPECT', url.parse(uri, true).query.access_token)
-	return url.parse(uri, true).query.access_token !== accessToken
-}
+const verifyAccessToken = uri =>
+	url.parse(uri, true).query.access_token !== accessToken
 
 const mapService = uri => url.parse(uri, true).query.provider || ''
 

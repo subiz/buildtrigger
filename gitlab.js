@@ -1,4 +1,4 @@
-const { gitlabAuth } = require('./config.js')
+const gitlabAuth = process.env.GITLAB_AUTH
 
 const convertGitlabHook = body => {
 	if (!body) return { url: '', repo: '', commit: '', branch: '' }
