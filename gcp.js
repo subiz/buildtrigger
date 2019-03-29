@@ -74,7 +74,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f Dockerfile ] && date && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && date && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION && date || exit 1',
+			'[ -f Dockerfile ] && date && cp Dockerfile .$_NAME.Dockerfile.tmp && ./.configmap -config=.config.yaml -format=docker -compact configmap.yaml >> .$_NAME.Dockerfile.tmp && docker build -q -t $_DOCKERHOST$_ORG/$_NAME:$_VERSION -f .$_NAME.Dockerfile.tmp . && date && docker push ${_DOCKERHOST}$_ORG/$_NAME:$_VERSION && date',
 		],
 		waitFor: ['run'],
 	},
@@ -84,7 +84,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com || exit 1',
+			'[ -d .cache ] && tar -zcf $_NAME.cache.tar.gz .cache && gsutil cp $_NAME.cache.tar.gz gs://artifacts.subiz-version-4.appspot.com',
 		],
 		waitFor: ['run'],
 	},
@@ -94,7 +94,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -d public ] && gsutil -m cp -Zr public gs://public-gcs.subiz-cdn.com/$_NAME/ || exit 1',
+			'[ -d public ] && gsutil -m cp -Zr public gs://public-gcs.subiz-cdn.com/$_NAME/',
 		],
 		waitFor: ['run'],
 	},
@@ -104,7 +104,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml || exit 1',
+			'[ -f deploy.prod.yaml ] && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml',
 		],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
@@ -116,7 +116,7 @@ const gSteps = [
 		id: 'last',
 		name: 'alpine',
 		entrypoint: 'sh',
-		args: ['-c', '[ -f last.sh ] && ./last.sh || exit 1'],
+		args: ['-c', '[ -f last.sh ] && ./last.sh'],
 	},
 ]
 
@@ -127,6 +127,7 @@ const makeBuildConfig = (giturl, name, version, org) => `{
       "object": "prod.tar.gz"
     }
   },
+  "tags": ["${name}"],
   "steps": ${JSON.stringify(gSteps)},
   "substitutions" : {
     "_GITURL": "${giturl}",
