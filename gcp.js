@@ -104,7 +104,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'if [ -f deploy.prod.yaml ]; then export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml; fi',
+			'if [ -f deploy.prod.yaml ]; then export GUID=$(date +%s) && export IMG="$_DOCKERHOST$_ORG/$_NAME:$_VERSION" && ./.envsubst < deploy.prod.yaml > /tmp/$_NAME.deploy.prod.yaml && cat /tmp/$_NAME.deploy.prod.yaml && /builder/kubectl.bash apply -f /tmp/$_NAME.deploy.prod.yaml; fi',
 		],
 		env: [
 			'CLOUDSDK_COMPUTE_ZONE=us-central1-a',
