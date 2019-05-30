@@ -1,6 +1,6 @@
 {
   "name": "buildtrigger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/subiz/buildtrigger.git"
+    "url": "git+ssh://git@github.com/subiz/buildtrigger.git"
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/subiz/buildtrigger#readme",
-  "devDependencies": {
-    "jest": "^23.6.0"
-  },
+  "homepage": "https://github.com/subiz/buildtrigger#readme",
   "dependencies": {
     "@subiz/ajax": "^1.0.13",
     "gtoken": "^2.3.0",
