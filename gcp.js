@@ -94,7 +94,7 @@ const gSteps = [
 		entrypoint: 'sh',
 		args: [
 			'-c',
-			'if [ -d public ]; then gsutil -m cp -Zr public gs://public-gcs.subiz-cdn.com/$_NAME/; fi',
+			'if [ -d public ]; then gsutil -h "Cache-Control:public, max-age=31536000" -m cp -Zr public gs://public-gcs.subiz-cdn.com/$_NAME/; fi',
 		],
 		waitFor: ['run'],
 	},
