@@ -1,3 +1,5 @@
+const githubAuth = process.env.GITHUB_AUTH
+
 const convertGithubHook = body => {
 	if (!body) return {}
 	try {
@@ -9,11 +11,18 @@ const convertGithubHook = body => {
 	let repo = (body.repository || {}).name || ''
 	let fullrepo = (body.repository || {}).full_name || ''
 	let branchsplit = ((body.ref || '') + '').split('/')
-	if (branchsplit.length < 3) { return { err: 'invalid branch: ' + JSON.stringify(body) } }
+	if (branchsplit.length < 3) {
+		return { err: 'invalid branch: ' + JSON.stringify(body) }
+	}
 	let branch = branchsplit[2]
 	if (!fullrepo) return { err: 'invalid repo fullnam' }
 	commit = commit.substring(0, 7)
-	return { url: `https://github.com/${fullrepo}.git`, repo, commit, branch }
+	return {
+		url: `https://${githubAuth}@github.com/${fullrepo}.git`,
+		repo,
+		commit,
+		branch,
+	}
 }
 
 module.exports = { convertGithubHook }
